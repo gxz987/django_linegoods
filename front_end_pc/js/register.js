@@ -1,6 +1,7 @@
 var vm = new Vue({
 	el: '#app',
 	data: {
+		host,    // host:host,
 		error_name: false,
 		error_password: false,
 		error_check_password: false,
@@ -9,16 +10,20 @@ var vm = new Vue({
 		error_image_code: false,
 		error_sms_code: false,
 
-		image_code_id: '',  // 图片验证码编号
-    	image_code_url: '',  // 验证码图片路径
 		username: '',
 		password: '',
 		password2: '',
 		mobile: '', 
 		image_code: '',
 		sms_code: '',
-		allow: false
+		allow: false,
+
+		image_code_id: '',  // 图片验证码编号
+    	image_code_url: '',  // 验证码图片路径
 	},
+	mounted:function () {
+		this.get_image_code();
+    },
 	methods: {
 		// 生成uuid
 		generate_uuid: function(){
@@ -34,7 +39,7 @@ var vm = new Vue({
 			return uuid;
 		},
 		// 生成一个图片验证码的编号，并设置页面中图片验证码img标签的src属性
-		generate_image_code: function(){
+		get_image_code: function(){
 			// 生成一个编号
 			// 严格一点的使用uuid保证编号唯一， 不是很严谨的情况下，也可以使用时间戳
 			this.image_code_id = this.generate_uuid();
