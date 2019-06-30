@@ -51,8 +51,16 @@ class SMSCodeView(GenericAPIView):
 
         # 保存短信验证码  发送记录
         redis_conn = get_redis_connection('verify_code')
-        redis_conn.setex("sms_%s" % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
-        redis_conn.setex("send_flag_%s" % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
+        # redis_conn.setex("sms_%s" % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
+        # redis_conn.setex("send_flag_%s" % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
+
+        # redis管道
+        pl = redis_conn.pipeline()
+        pl.setex("sms_%s" % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
+        pl.setex("sms_flag_%s" % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
+
+        # 让管道通知redis执行命令
+        pl.execute()
 
         # 发送短信
         from meidou_mall.meidou_mall.utils.yuntongxun.sms import CCP
