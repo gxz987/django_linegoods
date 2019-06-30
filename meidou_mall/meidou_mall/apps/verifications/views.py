@@ -10,8 +10,10 @@ from meidou_mall.libs.captcha.captcha import captcha
 from django_redis import get_redis_connection
 import logging
 
+from meidou_mall.utils.yuntongxun.sms import CCP
+from verifications import constants
 from verifications.serializer import ImageCodeCheckSerializer
-from . import constants
+# from . import constants
 
 # Create your views here.
 
@@ -50,7 +52,7 @@ class SMSCodeView(GenericAPIView):
         sms_code = '%06d' % random.randint(0, 999999)
 
         # 保存短信验证码  发送记录
-        redis_conn = get_redis_connection('verify_code')
+        redis_conn = get_redis_connection('verify_codes')
         # redis_conn.setex("sms_%s" % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
         # redis_conn.setex("send_flag_%s" % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
 
@@ -63,8 +65,6 @@ class SMSCodeView(GenericAPIView):
         pl.execute()
 
         # 发送短信
-        from meidou_mall.meidou_mall.utils.yuntongxun.sms import CCP
-
         try:
             ccp = CCP()
             expires = constants.SMS_CODE_REDIS_EXPIRES // 60

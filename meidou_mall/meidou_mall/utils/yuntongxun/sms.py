@@ -1,8 +1,10 @@
 # -*- coding:utf-8 -*-
 
-from meidou_mall.meidou_mall.utils.yuntongxun.CCPRestSDK import  REST
+# from meidou_mall.meidou_mall.utils.yuntongxun.CCPRestSDK import  REST
 
 # 说明：主账号，登陆云通讯网站后，可在"控制台-应用"中看到开发者主账号ACCOUNT SID
+from meidou_mall.utils.yuntongxun.CCPRestSDK import REST
+
 _accountSid = '8aaf07086b2bcfcf016b31ad0a1a01b5'
 
 # 说明：主账号Token，登陆云通讯网站后，可在控制台-应用中看到开发者主账号AUTH TOKEN
