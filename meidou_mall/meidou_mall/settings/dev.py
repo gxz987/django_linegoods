@@ -43,12 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     # 'meiduo_mall.apps.users.apps.UsersConfig', # 以上两行的路径是从manage.py出发开始找的路径
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # 解决跨域请求
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -202,11 +204,22 @@ LOGGING = {
     }
 }
 
+# 自定义的用户模型类配置
+AUTH_USER_MODEL = 'users.User'
+
 # 异常的配置
 REST_FRAMEWORK = {
     # 异常处理
     'EXCEPTION_HANDLER': 'meidou_mall.utils.exceptions.exception_handler',
 }
 
-# 自定义的用户模型类配置
-AUTH_USER_MODEL = 'users.User'
+# 添加白名单
+# CORS
+# CORS_ORIGIN_WHITELIST = (
+#     '127.0.0.1:8080',
+#     'localhost:8080',
+#     'www.meiduo.site:8080',
+#     'api.meiduo.site:8000'
+# )
+CORS_ORIGIN_ALLOW_ALL = True   # 允许所有主机跨域
+CORS_ALLOW_CREDENTIALS = True   # 允许携带cookie

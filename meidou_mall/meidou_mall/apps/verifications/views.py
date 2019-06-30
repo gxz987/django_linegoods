@@ -63,20 +63,24 @@ class SMSCodeView(GenericAPIView):
 
         # 让管道通知redis执行命令
         pl.execute()
+        print("*"*50)
 
         # 发送短信
         try:
             ccp = CCP()
             expires = constants.SMS_CODE_REDIS_EXPIRES // 60
             result = ccp.send_template_sms(mobile, [sms_code, expires], constants.SMS_CODE_TEMP_ID)
+            print('try通过')
         except Exception as e:
             logger.error('发送短信验证码[异常][ mobile: %s, message: %s]' % (mobile, e))
             return Response({'message': 'failed'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             if result == 0:
                 logger.info('发送短信验证码[正常][ mobile: %s]' % mobile)
+                print("Ok")
                 return Response({'message': 'OK'})
             else:
                 logger.warning('发送短信验证码[失败][ mobile: %s ]' % mobile)
+                print("no")
                 return Response({'message': 'failed'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
