@@ -18,3 +18,17 @@ class UsernameCountView(APIView):
             'count': count
         }
         return Response(data)
+
+
+
+class MobileCountView(APIView):
+    '''手机号数量,用于判断手机号是否已经注册过'''
+    def get(self, request, mobile):
+        '''获取指定手机号数量 '''
+        count = User.objects.filter(mobile=mobile).count()
+        data = {
+            'mobile': mobile,
+            'count': count
+        }
+
+        return Response(data)
