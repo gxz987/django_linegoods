@@ -219,7 +219,7 @@ REST_FRAMEWORK = {
 #     '127.0.0.1:8080',
 #     'localhost:8080',
 #     'www.meiduo.site:8080',
-#     'api.meiduo.site:8000'
+#     'api.meiduo.site:8080'
 # )
 CORS_ORIGIN_ALLOW_ALL = True   # 允许所有主机跨域
 CORS_ALLOW_CREDENTIALS = True   # 允许携带cookie

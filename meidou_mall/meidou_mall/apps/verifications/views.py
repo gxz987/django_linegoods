@@ -53,14 +53,14 @@ class SMSCodeView(GenericAPIView):
         sms_code = '%06d' % random.randint(0, 999999)
 
         # 保存短信验证码  发送记录
-        redis_conn = get_redis_connection('verify_codes')
+        redis_conn = get_redis_connection('verify_codes')  # 获得redis对象(get_redis_connection是个单独存在的函数)
         # redis_conn.setex("sms_%s" % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
         # redis_conn.setex("send_flag_%s" % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
 
         # redis管道
-        pl = redis_conn.pipeline()
-        pl.setex("sms_%s" % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
-        pl.setex("sms_flag_%s" % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
+        pl = redis_conn.pipeline()  # 管道对象
+        pl.setex("sms_%s" % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)  # 短信验证码有效期
+        pl.setex("sms_flag_%s" % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)  # 短信验证码间隔时间
 
         # 让管道通知redis执行命令
         pl.execute()
