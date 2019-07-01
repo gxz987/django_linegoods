@@ -10,10 +10,12 @@ from users.serializers import CreateUserSerializer
 
 
 class UsernameCountView(APIView):
+    print(111)
     '''用户名数量,用于判断用户名是否已存在'''
     # 因逻辑本身比较简单,用GenericAPIView的话还需要定义序列化器,故直接继承APIView
     def get(self, request, username):
         '''获取指定用数量'''
+        print(1)
         count = User.objects.filter(username=username).count()
         data = {
             'username': username,
