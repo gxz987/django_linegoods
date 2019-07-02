@@ -220,9 +220,10 @@ REST_FRAMEWORK = {
     ),
 }
 
-# 指明JWT token的有效期
+# 指明JWT
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),   # token的有效期
+    'JWT_RESPONSE_PAYLOAD_HANDLET':'users.utils.jwt_response_payload_handler', # 指定自定义的jwt认证成功返回数据的的方法
 }
 
 # 添加白名单
