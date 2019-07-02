@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import sys
+import datetime
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -211,6 +212,17 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     # 异常处理
     'EXCEPTION_HANDLER': 'meidou_mall.utils.exceptions.exception_handler',
+    # 认证
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  # session认证
+        'rest_framework.authentication.BasicAuthentication',  # 基本认证
+    ),
+}
+
+# 指明JWT token的有效期
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
 }
 
 # 添加白名单
@@ -223,3 +235,4 @@ CORS_ORIGIN_WHITELIST = (
 )
 # CORS_ORIGIN_ALLOW_ALL = True   # 允许所有主机跨域
 CORS_ALLOW_CREDENTIALS = True   # 允许携带cookie
+
