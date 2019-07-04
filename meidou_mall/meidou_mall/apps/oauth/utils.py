@@ -1,11 +1,12 @@
 import re
 from urllib.parse import urlencode, parse_qs
 from urllib.request import urlopen
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadData
+from itsdangerous import TimedJSONWebSignatureSerializer as TJWSSerializer, BadData
 from django.conf import settings
 import json
 import logging
 
+from oauth import constants
 from oauth.exceptions import OAuthQQAPIError
 
 logger = logging.getLogger('django')
@@ -89,3 +90,8 @@ class OAuthQQ(object):
             openid = resp_dict.get('openid')
 
             return openid
+
+    def generate_bind_user_access_token(self, openid):
+        serializer = TJWSSerializer(settings.SECRET_KEY, constants.BIAD_USER_ACCESS_TOKEN_EXPIRES)
+        token = serializer.dumps({'openid': openid})
+        return token.decode()
