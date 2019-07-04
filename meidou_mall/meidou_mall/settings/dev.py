@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # 'meiduo_mall.apps.users.apps.UsersConfig', # 以上两行的路径是从manage.py出发开始找的路径
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
+    'oauth.apps.OauthConfig',
 ]
 
 MIDDLEWARE = [

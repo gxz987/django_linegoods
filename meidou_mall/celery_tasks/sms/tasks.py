@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from celery_tasks.main import celery_app
-from meidou_mall.utils.yuntongxun.sms import CCP
+from celery_tasks.sms.utils.yuntongxun.sms import CCP
 from verifications import constants
 
 
