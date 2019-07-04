@@ -29,5 +29,6 @@ class OAuthQQ(object):
             'redirect_uri': self.redirect_uri,
             'state': self.state,
         }
+
         url += urlencode(params)
         return url
