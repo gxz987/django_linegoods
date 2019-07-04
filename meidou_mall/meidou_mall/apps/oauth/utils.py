@@ -52,6 +52,7 @@ class OAuthQQ(object):
             # 读取响应体的数据
             resp_data = resp.read()  # bytes
             resp_data = resp_data.decode()  # str
+            # print(resp_data)
             # 解析access_token
             resp_dict = parse_qs(resp_data)
         except Exception as e:

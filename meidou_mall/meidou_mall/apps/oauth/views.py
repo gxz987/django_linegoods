@@ -36,4 +36,12 @@ class QQAuthUserView(APIView):
         try:
             access_token = oauth_qq.get_access_token(code)
         except OAuthQQAPIError:
-            return Response()
+            return Response({'message': '获取access_token失败'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        # 根据access_token 获取openid
+
+        # 根据openid查询数据库OAuthQQUser 判断数据是否存在
+
+        # 如果数据存在,表示用户已经绑定多身份,签发JWT token
+
+        # 如果数据不存在.处理openid 并返回
