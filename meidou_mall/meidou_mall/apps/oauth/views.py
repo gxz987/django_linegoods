@@ -31,14 +31,15 @@ class QQAuthUserView(APIView):
         if not code:
             return Response({'message': '缺少code'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # 根据code 获取access_token
         oauth_qq = OAuthQQ()
         try:
+            # 根据code 获取access_token
             access_token = oauth_qq.get_access_token(code)
+            # 根据access_token 获取openid
+            openid = oauth_qq.get_openid(access_token)
         except OAuthQQAPIError:
             return Response({'message': '获取access_token失败'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-        # 根据access_token 获取openid
 
         # 根据openid查询数据库OAuthQQUser 判断数据是否存在
 
