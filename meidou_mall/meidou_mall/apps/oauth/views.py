@@ -2,11 +2,13 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import status
+from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_jwt.settings import api_settings
 
 from oauth.models import OAuthQQUser
+from oauth.serializers import OAuthQQUserSerializer
 from oauth.utils import OAuthQQ
 from .exceptions import OAuthQQAPIError
 
@@ -27,8 +29,11 @@ class QQAuthURLView(APIView):
         return Response({'login_url': login_url})
 
 
-class QQAuthUserView(APIView):
+class QQAuthUserView(CreateAPIView):
     """qq登录的用户"""    # ?code=xxxx
+
+    serializer_class = OAuthQQUserSerializer
+
     def get(self, request):
         # 获取code
         code = request.query_params.get('code')

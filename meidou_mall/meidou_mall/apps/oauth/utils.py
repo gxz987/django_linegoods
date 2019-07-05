@@ -95,3 +95,14 @@ class OAuthQQ(object):
         serializer = TJWSSerializer(settings.SECRET_KEY, constants.BING_USER_ACCESS_TOKEN_EXPIRES)
         token = serializer.dumps({'openid': openid})
         return token.decode()
+
+    @staticmethod
+    def check_bind_user_access_token(access_token):
+        """通过access_token获取openid"""
+        serializer = TJWSSerializer(settings.SECRET_KEY, constants.BING_USER_ACCESS_TOKEN_EXPIRES_)
+        try:
+            data = serializer.loads(access_token)
+        except BadData:
+            return None
+        else:
+            return data['openid']
