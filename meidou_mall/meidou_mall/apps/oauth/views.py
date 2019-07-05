@@ -31,7 +31,7 @@ class QQAuthURLView(APIView):
 
 class QQAuthUserView(CreateAPIView):
     """qq登录的用户"""    # ?code=xxxx
-
+    print('************************')
     serializer_class = OAuthQQUserSerializer
 
     def get(self, request):

@@ -33,8 +33,10 @@ class OAuthQQUserSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, attrs):
+        print('校验数据')
         # 校验access_token
         access_token = attrs['access_token']
+
         openid = OAuthQQ.check_bind_user_access_token(access_token)
         if not openid:
             raise serializers.ValidationError('无效的access_token')
@@ -43,8 +45,10 @@ class OAuthQQUserSerializer(serializers.ModelSerializer):
         # 校验短信验证码
         mobile = attrs['mobile']
         sms_code = attrs['sms_code']
+        print(sms_code,111111111111111111)
         redis_conn = get_redis_connection('verify_codes')
-        real_sms_code = redis_conn.get('sms_%s' % mobile)
+        real_sms_code = redis_conn.get('sms_%s' % mobile).decode()
+
         if real_sms_code != sms_code:
             raise serializers.ValidationError('短信验证码错误')
 
@@ -64,14 +68,13 @@ class OAuthQQUserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         openid = validated_data['openid']
-        user = validated_data['user']
+        user = validated_data.get('user')
         mobile = validated_data['mobile']
         password = validated_data['password']
 
         # 判断用户是否存在
         if not user:
             user = User.objects.create_user(username=mobile, mobile=mobile, password=password)
-
         OAuthQQUser.objects.create(user=user, openid=openid)
 
         # 签发JWT token

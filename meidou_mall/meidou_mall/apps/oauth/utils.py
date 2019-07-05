@@ -15,10 +15,10 @@ logger = logging.getLogger('django')
 class OAuthQQ(object):
     """QQ认证辅助工具类"""
     def __init__(self, client_id=None, client_secret=None, redirect_uri=None, state=None):
-        self.client_id = client_id or settings.QQ_CLIENT_ID
-        self.redirect_uri = redirect_uri or settings.QQ_REDIRECT_URI
+        self.client_id = client_id if client_secret else settings.QQ_CLIENT_ID
+        self.redirect_uri = redirect_uri if redirect_uri else settings.QQ_REDIRECT_URI
         self.state = state or settings.QQ_STATE  # 用于保存登录成功后的跳转页面路径
-        self.client_secret = client_secret or settings.QQ_CLIENT_SECRET
+        self.client_secret = client_secret if client_secret else settings.QQ_CLIENT_SECRET
 
     def get_login_url(self):
         """
@@ -65,11 +65,12 @@ class OAuthQQ(object):
             raise OAuthQQAPIError
         else:
             access_token = resp_dict.get('access_token')
-            # print("access_token: %s" % access_token)
+            print("access_token: %s" % access_token)
             return access_token[0]
 
     def get_openid(self, access_token):
-        url = 'https://graph.qq.com/oauth2.0/me?access_token' + access_token
+        url = 'https://graph.qq.com/oauth2.0/me?access_token=' + access_token
+
         try:
             # 发送请求
             resp = urlopen(url)
@@ -81,7 +82,7 @@ class OAuthQQ(object):
             # 解析一:通过切片
             resp_data = resp_data[10:-4]
             # 解析二:通过正则
-            # resp_data = re.findall(r'[^{].*?}$')
+            # resp_data = re.findall(r'[^{].*?}$', resp_data)
             resp_dict = json.loads(resp_data)
         except Exception as e:
             logger.error('获取openid异常: %s' % e)
@@ -92,14 +93,14 @@ class OAuthQQ(object):
             return openid
 
     def generate_bind_user_access_token(self, openid):
-        serializer = TJWSSerializer(settings.SECRET_KEY, constants.BING_USER_ACCESS_TOKEN_EXPIRES)
+        serializer = TJWSSerializer(settings.SECRET_KEY, constants.BIND_USER_ACCESS_TOKEN_EXPIRES)
         token = serializer.dumps({'openid': openid})
         return token.decode()
 
     @staticmethod
     def check_bind_user_access_token(access_token):
         """通过access_token获取openid"""
-        serializer = TJWSSerializer(settings.SECRET_KEY, constants.BING_USER_ACCESS_TOKEN_EXPIRES_)
+        serializer = TJWSSerializer(settings.SECRET_KEY, constants.BIND_USER_ACCESS_TOKEN_EXPIRES)
         try:
             data = serializer.loads(access_token)
         except BadData:
