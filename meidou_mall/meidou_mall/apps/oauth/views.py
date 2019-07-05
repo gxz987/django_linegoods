@@ -10,9 +10,10 @@ from oauth.models import OAuthQQUser
 from oauth.utils import OAuthQQ
 from .exceptions import OAuthQQAPIError
 
+
 #  url(r'^qq/authorization/$', views.QQAuthURLView.as_view()),
 class QQAuthURLView(APIView):
-    """获取qq登录的url"""
+    """获取qq登录的url"""    # ?next=xxxx
     def get(self, request):
         """提供用于qq登录的url"""
         # 获取next参数
@@ -21,15 +22,19 @@ class QQAuthURLView(APIView):
         # 拼接qq登录的网址
         oauth_qq = OAuthQQ(state=next)
         login_url = oauth_qq.get_login_url()
+        # print("login_url: %s" % login_url)
 
         return Response({'login_url': login_url})
 
 
 class QQAuthUserView(APIView):
-    """qq登录的用户"""
+    print(11111111111111)
+    """qq登录的用户"""    # ?code=xxxx
     def get(self, request):
+        print(22222222222)
         # 获取code
         code = request.query_params.get('code')
+        print(code)
         if not code:
             return Response({'message': '缺少code'}, status=status.HTTP_400_BAD_REQUEST)
 
