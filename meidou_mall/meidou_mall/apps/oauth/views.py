@@ -28,13 +28,10 @@ class QQAuthURLView(APIView):
 
 
 class QQAuthUserView(APIView):
-    print(11111111111111)
     """qq登录的用户"""    # ?code=xxxx
     def get(self, request):
-        print(22222222222)
         # 获取code
         code = request.query_params.get('code')
-        print(code)
         if not code:
             return Response({'message': '缺少code'}, status=status.HTTP_400_BAD_REQUEST)
 

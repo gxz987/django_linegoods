@@ -37,7 +37,6 @@ class OAuthQQ(object):
         return url
 
     def get_access_token(self, code):
-        print(55555555555555)
         """获取access_token"""
         url = 'https://graph.qq.com/oauth2.0/token?'
         params = {
@@ -51,7 +50,6 @@ class OAuthQQ(object):
 
         try:
             # 发送请求
-            print("发送获取access_token请求")
             resp = urlopen(url)
             # 读取响应体的数据
             resp_data = resp.read()  # bytes
@@ -67,7 +65,7 @@ class OAuthQQ(object):
             raise OAuthQQAPIError
         else:
             access_token = resp_dict.get('access_token')
-            print("access_token: %s" % access_token)
+            # print("access_token: %s" % access_token)
             return access_token[0]
 
     def get_openid(self, access_token):
