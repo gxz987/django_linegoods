@@ -1,12 +1,13 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users.models import User
-from users.serializers import CreateUserSerializer
+from users.serializers import CreateUserSerializer, UserDetailSerializer
 
 
 class UsernameCountView(APIView):
@@ -52,4 +53,17 @@ class UserView(CreateAPIView):
     serializer_class = CreateUserSerializer
 
 
+# GET /user/
+class UserDetailView(RetrieveAPIView):
+    '''用户基本信息'''
+    serializer_class = UserDetailSerializer
+    permission_classes = [IsAuthenticated]  # 指明必须登录认证后才能访问
+
+    # 在RetrieveAPIView中获取详情数据的url是/user/<pk>,而现在设计的接口是/user/
+    # 故只能重写get_object方法
+    def get_object(self):
+        # 返回当前请求的用户
+        # 在类视图对象中,可以通过类视图对象的属性获取request
+        # 在django的请求request对象中,user属性表明当前请求的用户
+        return self.request.user
 
