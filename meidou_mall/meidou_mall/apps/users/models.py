@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from itsdangerous import TimedJSONWebSignatureSerializer as TJWSSerializer
+from itsdangerous import TimedJSONWebSignatureSerializer as TJWSSerializer, BadData
 
 from . import constants
 
@@ -26,3 +26,21 @@ class User(AbstractUser):
         verify_url = 'http://www.meiduo.site:8080/success_verify_email.html?token=' + token
 
         return verify_url
+
+    @staticmethod
+    def check_verify_email_token(token):
+        '''校验邮箱'''
+        serializer = TJWSSerializer(settings.SECRET_KEY, expires_in=constants.VERIFY_EMAIL_TOKEN_EXPIRES)
+        try:
+            data = serializer.loads(token)
+        except BadData:
+            return None
+        else:
+            user_id = data['user_id']
+            email = data['email']
+            try:
+                user = User.objects.get(id=user_id, email=email)
+            except User.DoesNotExist:
+                return None
+            else:
+                return user
