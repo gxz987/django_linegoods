@@ -1,13 +1,13 @@
 from django.shortcuts import render
 
 # Create your views here.
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users.models import User
-from users.serializers import CreateUserSerializer, UserDetailSerializer
+from users.serializers import CreateUserSerializer, UserDetailSerializer, EmailSerializer
 
 
 class UsernameCountView(APIView):
@@ -67,3 +67,11 @@ class UserDetailView(RetrieveAPIView):
         # 在django的请求request对象中,user属性表明当前请求的用户
         return self.request.user
 
+
+# PUT /email/
+class EmailView(UpdateAPIView):
+    serializer_class = EmailSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user

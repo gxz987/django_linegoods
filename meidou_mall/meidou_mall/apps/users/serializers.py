@@ -4,6 +4,7 @@ from django_redis import get_redis_connection
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 
+from celery_tasks.email.task import send_active_email
 from users.models import User
 
 
@@ -96,3 +97,23 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'mobile', 'email', 'email_active')
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    """"""
+    class Meta:
+        model = User
+        fields = ('id', 'email')
+    # 因为在更新用户邮箱的时候,同时发送邮件,所以重写update方法
+    def update(self, instance, validated_data):
+        email = validated_data['email']
+        instance.email = email
+        instance.save()
+
+        # 生成激活链接
+        url = instance.generate_verify_email_url()
+
+        # 发送邮件
+        send_active_email.delay(email, url)
+
+        return instance
