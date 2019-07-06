@@ -65,7 +65,8 @@ class OAuthQQ(object):
             raise OAuthQQAPIError
         else:
             access_token = resp_dict.get('access_token')
-            print("access_token: %s" % access_token)
+            # print("access_token: %s" % access_token)
+            # access_token: ['BB8992BE8D6C316F98817EC254DD88C0']
             return access_token[0]
 
     def get_openid(self, access_token):
@@ -76,13 +77,18 @@ class OAuthQQ(object):
             resp = urlopen(url)
             # 读取响应体的数据
             resp_data = resp.read().decode()
+            # print(resp_data, 11111111111111)
+            # callback({"client_id": "101474184", "openid": "EA06C7AAB5468836A67B1229A7B6A582"});
+            # 11111111111111
 
             # callback( {"client_id":"YOUR_APPID","openid":"YOUR_OPENID"} )\n;
 
             # 解析一:通过切片
             resp_data = resp_data[10:-4]
+            # print(resp_data, 2222222222222222222)
+            # '{"client_id": "101474184", "openid": "EA06C7AAB5468836A67B1229A7B6A582"}' 2222222222222222222
             # 解析二:通过正则
-            # resp_data = re.findall(r'[^{].*?}$', resp_data)
+            # resp_data = re.findall(r'[^{].*}$', resp_data)
             resp_dict = json.loads(resp_data)
         except Exception as e:
             logger.error('获取openid异常: %s' % e)

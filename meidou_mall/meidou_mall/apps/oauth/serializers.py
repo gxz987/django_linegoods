@@ -33,7 +33,6 @@ class OAuthQQUserSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, attrs):
-        print('校验数据')
         # 校验access_token
         access_token = attrs['access_token']
 
@@ -45,7 +44,8 @@ class OAuthQQUserSerializer(serializers.ModelSerializer):
         # 校验短信验证码
         mobile = attrs['mobile']
         sms_code = attrs['sms_code']
-        print(sms_code,111111111111111111)
+        # print(sms_code,111111111111111111)
+        # 276842 111111111111111111
         redis_conn = get_redis_connection('verify_codes')
         real_sms_code = redis_conn.get('sms_%s' % mobile).decode()
 
