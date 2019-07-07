@@ -257,3 +257,11 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = 'gxz3044@163.com'  # 发送邮件的邮箱
 EMAIL_HOST_PASSWORD = 'gxz3044'  # 授权码,不是邮箱密码
 EMAIL_FROM = 'GXZ商城<gxz3044@163.com>'  # 收件人看到的发件人
+
+# DRF扩展
+REST_FRAMEWORK_EXTENSIONS = {
+    # 缓存时间
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 60,
+    # 缓存存储
+    'DEFAULT_USE_CACHE': 'default',
+}
