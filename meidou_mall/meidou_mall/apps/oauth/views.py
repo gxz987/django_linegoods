@@ -53,8 +53,8 @@ class QQAuthUserView(CreateAPIView):
             oauth_qq_user = OAuthQQUser.objects.get(openid=openid)
         except OAuthQQUser.DoesNotExist:
             # 如果数据不存在.处理openid 并返回
-            access_token = oauth_qq.generate_bind_user_access_token(openid)
-            return Response({'access_token': access_token})
+            openid_token = oauth_qq.generate_bind_user_access_token(openid)
+            return Response({'access_token': openid_token})
         else:
             # 如果数据存在,表示用户已经绑定多身份,签发JWT token
             jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
