@@ -108,6 +108,9 @@ class AddressViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, GenericVi
     def get_queryset(self):
         return self.request.user.addresses.filter(is_deleted=False)
 
+    # addresses其实已经有序列化器了：UserAddressSerializer，其他的字段可以自己补充，
+    # 我们直接重新写视图的list方法（注意：这里不用继承ListModelMixin了，因为返回值都不一样了，继承它，
+    # 也不好复用ListModelMixin的的list方法，直接自己实现list方法：）
     def list(self, request, *args, **kwargs):
         '''用户地址列表数据'''
         queryset = self.get_queryset()
@@ -123,26 +126,26 @@ class AddressViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, GenericVi
     def create(self, request, *args, **kwargs):
         '''保存用户地址数据'''
         # 检查用户地址数据数目不能超过上限
-        count = request.user.addresses.filter(is_deleted=False).count()
+        count = request.user.addresses.filter(is_deleted=False).count()   # 不包含已逻辑删除的数据
         if count >= constants.USER_ADDRESS_COUNTS_LIMIT:
             return Response({'message': '保存地址数据已达到上限'}, status=status.HTTP_400_BAD_REQUEST)
 
         return super().create(request, *args, **kwargs)
 
+    # 这里不继承DestroyModelMixin，因为他的删除是真删除，而我们是逻辑删除：
     def destroy(self, request, *args, **kwargs):
         '''处理删除'''
         address = self.get_object()
         # 进行逻辑删除
         address.is_deleted = True
         address.save()
-
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['put'], detail=True)
     def status(self, request, pk=None, address_id=None):
         '''设置默认地址'''
         address = self.get_object()
-        request.user.default_address = address
+        request.user.default_address = address  # 这里的默认地址是定义在user模型类中，所以这里更新的是user
         request.user.save()
         return Response({'message': 'OK'}, status=status.HTTP_200_OK)
 
@@ -150,7 +153,7 @@ class AddressViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, GenericVi
     def title(self, request, pk=None, address_id=None):
         '''修改标题'''
         address = self.get_object()
-        serializer = AddressTitleSerializer(instance=address, data=request.data)
+        serializer = AddressTitleSerializer(instance=address, data=request.data)   # 地址标题的序列化器对象
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
