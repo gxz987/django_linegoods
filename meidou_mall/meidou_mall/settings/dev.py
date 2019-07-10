@@ -271,7 +271,7 @@ REST_FRAMEWORK_EXTENSIONS = {
 }
 
 # django文件存储
-DEFAULT_FILE_STORAGE = 'meiduo_mall.utils.fastdfs.fdfs_storage.FastDFSStorage'
+DEFAULT_FILE_STORAGE = 'meidou_mall.utils.fastdfs.fdfs_storage.FastDFSStorage'
 
 # FastDFS
 FDFS_URL = 'http://image.meiduo.site:8888/'
