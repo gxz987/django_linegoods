@@ -64,6 +64,7 @@ def generate_static_index_html():
         'categories': categories,
         'contents': contents
     }
+    # print(context)
 
     template = loader.get_template('index.html')
     html_text = template.render(context)
