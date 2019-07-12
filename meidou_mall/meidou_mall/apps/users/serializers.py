@@ -178,7 +178,8 @@ class AddUserBrowsingHistorySerializer(serializers.Serializer):
         user_id = self.context['request'].user.id
         sku_id = validated_data['sku_id']
 
-        redis_conn = get_redis_connection('history')
+        # redis  [1,2,3,4]
+        redis_conn = get_redis_connection('history')  # redis 对象
         pl = redis_conn.pipeline()  # 列表
         print(pl)
 
@@ -196,7 +197,10 @@ class AddUserBrowsingHistorySerializer(serializers.Serializer):
         return validated_data
 
 
-
+class SKUserializer(serializers.ModelSerializer):
+    class Meta:
+        model = SKU
+        fields = ('id', 'name', 'price', 'default_image_url', 'comments')
 
 
 
