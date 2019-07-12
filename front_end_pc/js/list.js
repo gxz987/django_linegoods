@@ -8,7 +8,7 @@ var vm = new Vue({
         token: sessionStorage.token || localStorage.token,
         cat: '', // 当前商品类别
         page: 1, // 当前页数
-        page_size: 2, // 每页数量
+        page_size: 5, // 每页数量
         ordering: '-create_time', // 排序
         count: 0,  // 总数量
         skus: [], // 数据
@@ -51,7 +51,7 @@ var vm = new Vue({
             } else if (this.page <= 3) {
                 nums = [1, 2, 3, 4, 5];
             } else if (this.total_page - this.page <= 2) {
-                for (var i=this.total_page; i>this.total_page-5; i--) {
+                for (var i=this.total_page-5; i<=this.total_page; i++) {
                     nums.push(i);
                 }
             } else {
