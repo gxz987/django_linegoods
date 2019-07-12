@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,7 +12,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from users import constants
 from users.models import User
-from users.serializers import CreateUserSerializer, UserDetailSerializer, EmailSerializer, UserAddressSerializer, AddressTitleSerializer
+from users.serializers import CreateUserSerializer, UserDetailSerializer, EmailSerializer, UserAddressSerializer, AddressTitleSerializer, AddUserBrowsingHistorySerializer
 
 
 class UsernameCountView(APIView):
@@ -26,7 +26,6 @@ class UsernameCountView(APIView):
             'count': count
         }
         return Response(data)
-
 
 
 class MobileCountView(APIView):
@@ -159,8 +158,16 @@ class AddressViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, GenericVi
         return Response(serializer.data)
 
 
+class UserBrowsingHistoryView(mixins.CreateModelMixin, GenericAPIView):
+    """
+    用户浏览历史记录
+    """
+    serializer_class = AddUserBrowsingHistorySerializer
+    permission_classes = [IsAuthenticated]
 
-
+    def post(self, request):
+        """保存"""
+        return self.create(request)
 
 
 
