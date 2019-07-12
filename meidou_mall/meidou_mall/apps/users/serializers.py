@@ -180,9 +180,12 @@ class AddUserBrowsingHistorySerializer(serializers.Serializer):
 
         # redis  [1,2,3,4]
         redis_conn = get_redis_connection('history')  # redis 对象
-        pl = redis_conn.pipeline()  # 列表
-        print(pl)
-
+        # print(redis_conn, 1111111111)
+        # Redis < ConnectionPool < Connection < host = 127.0.0.1, port = 6379, db = 3 >> > 1111111111
+        pl = redis_conn.pipeline()
+        # print(pl, 2222222222222)
+        # Pipeline < ConnectionPool < Connection < host = 127.0.0.1, port = 6379, db = 3 >> > 2222222222222
+        
         # 移除已存在的本商品浏览记录
         pl.lrem('history_%s' % user_id, 0, sku_id)
 
@@ -193,7 +196,8 @@ class AddUserBrowsingHistorySerializer(serializers.Serializer):
         pl.ltrim('history_%s' % user_id, 0, constants.USER_BROWSING_HISTORY_COUNTS_LIMIT - 1)
 
         pl.execute()
-
+        # print(validated_data, 33333333333333)
+        # {'sku_id': 9} 33333333333333
         return validated_data
 
 
