@@ -7,7 +7,7 @@ import pickle
 import base64
 
 from . import constants
-from .serializers import CartSerializer
+from .serializers import CartSerializer, CartSKUSerializer
 from goods.models import SKU
 # Create your views here.
 
@@ -100,3 +100,68 @@ class CartView(GenericAPIView):
             response.set_cookie('cart', cart_cookie, max_age=constants.CART_COOKIE_EXPIRES)
 
             return response
+
+    def get(self, request):
+        '''查询购物车'''
+
+        # 判断用户的登录状态
+        try:
+            user = request.user
+        except Exception:
+            user = None
+
+        # 查询
+        if user and user.is_authenticated:
+            # 如果用户已登录,从redis查询,  sku_id  count  selected
+            redis_conn = get_redis_connection('cart')
+            redis_cart = redis_conn.hgetall('cart_%s' % user.id)
+            # redis_cart = {
+            #     商品的sku_id  bytes字节类型: 数量  bytes字节类型
+            #     商品的sku_id  bytes字节类型: 数量  bytes字节类型
+            #    ...
+            # }
+            redis_cart_selected = redis_conn.smembers('cart_selected_%s' % user.id)
+            # redis_cart_selected = set(勾选的商品sku_id bytes字节类型, ....)
+
+            # 遍历redis_cart, 形成cart_dict
+            cart_dict = {}
+            for sku_id, count in redis_cart.items():
+                cart_dict[int(sku_id)] = {
+                    'count': int(count),
+                    'selected': sku_id in redis_cart_selected
+                }
+        else:
+            # 如果用户未登录,从cookie中查询
+            cookie_cart = request.COOKIES.get('cart')
+
+            if cookie_cart:
+                # 表示cookie中有购物车数据
+                # 解析
+                cart_dict = pickle.loads(base64.b64decode(cookie_cart.encode()))
+            else:
+                # 表示cookie中没有购物车数据
+                cart_dict = {}
+
+        # cart_dict = {
+        #     sku_id_1: {
+        #         'count': 10
+        #         'selected': True
+        #     },
+        #     sku_id_2: {
+        #         'count': 10
+        #         'selected': False
+        #     },
+        # }
+
+        # 查询数据库
+        sku_id_list = cart_dict.keys()
+        sku_obj_list = SKU.objects.filter(id__in=sku_id_list)
+
+        # 遍历sku_obj_list, 向sku对象中添加count和selected属性
+        for sku in sku_obj_list:
+            sku.count = cart_dict[sku.id]['count']
+            sku.selected = cart_dict[sku.id]['selected']
+
+        # 序列化返回
+        serializer = CartSKUSerializer(sku_obj_list, many=True)
+        return Response(serializer.data)
