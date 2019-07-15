@@ -39,7 +39,7 @@ def merge_cart_cookie_to_redis(request, user, response):
     redis_cart_selected = set(3, 4)
     """
     # 获取cookie中的购物车数据
-    cookie_cart = request.COOKIE.get('cart')
+    cookie_cart = request.COOKIES.get('cart')
 
     if not cookie_cart:
         # 表示cookie中没有购物车数据
