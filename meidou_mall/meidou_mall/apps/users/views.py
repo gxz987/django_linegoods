@@ -10,7 +10,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import mixins
 from rest_framework.viewsets import GenericViewSet
+from rest_framework_jwt.views import ObtainJSONWebToken
 
+from carts.utils import merge_cart_cookie_to_redis
 from goods.models import SKU
 from users import constants
 from users.models import User
@@ -186,9 +188,20 @@ class UserBrowsingHistoryView(CreateAPIView):
         return Response(serializer.data)
 
 
+class UserAuthorizeView(ObtainJSONWebToken):
+    """用户登录认证试图, 因用户一登录就要=要进行购物车的合并,故重写系统的用户登录认证"""
+    # 登录逻辑发起的请求是post请求，所以我们这里重写post函数即可。
+    # 重写post之后，原来的校验逻辑还是super来做，剩下的合并我们来做
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
 
+        # 如果用户登录成功, 合并购物车
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            response = merge_cart_cookie_to_redis(request, user, response)
 
-
+        return response
 
 
 
