@@ -153,6 +153,7 @@ class SaveOrderSerializer(serializers.ModelSerializer):
                 transaction.savepoint_rollback(save_id)
                 raise  # 捕获完非验证错误,记录完日志,页抛出
             else:
+                # 提交事务
                 transaction.savepoint_commit(save_id)
 
         # 删除购物车中已结算的商品
