@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'ckeditor_uploader',  # 富文本编辑器上传图片模块
     'django_crontab',   # 定时任务
     'haystack',  # 对接搜索引擎elasticsearch
+    'xadmin',
+    'crispy_forms',
+    'reversion',
     # 'meiduo_mall.apps.users.apps.UsersConfig', # 以上两行的路径是从manage.py出发开始找的路径
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
@@ -264,7 +267,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:8080',
     'http://localhost:8080',
     'http://www.meiduo.site:8080',
-    'http://api.meiduo.site:8080'
+    'http://api.meiduo.site:8000'
 )
 # CORS_ORIGIN_ALLOW_ALL = True   # 允许所有主机跨域
 CORS_ALLOW_CREDENTIALS = True   # 允许携带cookie
