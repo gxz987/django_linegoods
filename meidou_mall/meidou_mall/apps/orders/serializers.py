@@ -111,7 +111,7 @@ class SaveOrderSerializer(serializers.ModelSerializer):
                         origin_sales = sku.sales
 
                         # 判断库存
-                        if sku.stock < sku_count:
+                        if origin_stock < sku_count:
                             # 回滚到保存点
                             transaction.savepoint_rollback(save_id)
                             raise serializers.ValidationError('商品%s库存不足' % sku.name)
