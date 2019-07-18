@@ -350,3 +350,6 @@ ALIPAY_DEBUG = True
 
 # 配置读写分离
 DATABASE_ROUTERS = ['meidou_mall.utils.db_router.MasterSlaveDBRouter']
+
+# 收集django静态文件保存目录
+STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'front_end_pc/static')
